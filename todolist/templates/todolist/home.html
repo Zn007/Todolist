@@ -1,0 +1,139 @@
+{% extends 'todolist/base.html' %}
+{% load static %}
+{% block css %}{% static 'todolist/css/home.css' %}{% endblock css %}
+{% block 标题 %}你的个人待办清单{% endblock 标题 %}
+{% block 主页高亮 %}active{% endblock 主页高亮 %}
+{% block 主体 %}
+{% if 警告 %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>
+        <center>{{警告}}</center>
+    </strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
+
+{% if 信息 %}
+<div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <strong>
+        <center>{{信息}}</center>
+    </strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="thead-light">
+        <tr>
+            <th>序号</th>
+            <th>待办事项</th>
+            <th>编辑</th>
+            <th>划掉</th>
+            <th>删除</th>
+        </tr>
+        </thead>
+        <tbody class="no-underline">
+        {% for event in 清单 %}
+        {% if event.已完成 %}
+        <tr class="table-dark">
+            <th class="text-dark" scope="row">{{ forloop.counter }}</th>
+            <td class="text-dark" id="line-through">{{event.待办事项}}</td>
+            <td class="text-secondary">不可编辑</td>
+            <!--<td><a class="text-info" href="#">撤销</a></td>-->
+            <td>
+                <form method="POST" action="{% url 'todolist:划掉' forloop.counter %}">
+                    {% csrf_token %}
+                    <input name="完成状态" type="hidden" value="未完成">
+                    <button type="submit" class="btn btn-primary btn-sm">撤销</button>
+                </form>
+            </td>
+            <!--<td><a class="text-danger" href="{% url 'todolist:删除' forloop.counter %}">删除</a></td>-->
+            <td>
+                <form method="POST" action="{% url 'todolist:删除' forloop.counter %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">删除</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{event.待办事项}}</td>
+            <td><a href="{% url 'todolist:编辑' forloop.counter %}">
+                <button type="submit" class="btn btn-primary btn-sm">编辑</button>
+            </a>
+            </td>
+            <!--<td><a href="">划掉</a></td>-->
+            <td>
+                <form method="POST" action="{% url 'todolist:划掉' forloop.counter %}">
+                    {% csrf_token %}
+                    <input name="完成状态" type="hidden" value="已完成">
+                    <button type="submit" class="btn btn-primary btn-sm">划掉</button>
+                </form>
+            </td>
+            <!--<td><a class="text-info" href="{% url 'todolist:删除' forloop.counter %}">删除</a></td>-->
+            <td>
+                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#exampleModal">删除
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">请确认</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                确定要删除<strong> 未办事项:{{event.待办事项}}</strong>吗?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                                <form method="POST" action="{% url 'todolist:删除' forloop.counter %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">确定</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+
+        <!--<tr>-->
+        <!--<th scope="row">2</th>-->
+        <!--<td>看一会小说</td>-->
+        <!--<td><a class="text-success" href="#">编辑</a></td>-->
+        <!--<td><a href="#">划掉</a></td>-->
+        <!--<td><a class="text-info" href="#">删除</a></td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+        <!--<th scope="row">3</th>-->
+        <!--<td>散散步</td>-->
+        <!--<td><a class="text-success" href="#">编辑</a></td>-->
+        <!--<td><a href="#">划掉</a></td>-->
+        <!--<td><a class="text-info" href="#">删除</a></td>-->
+        <!--</tr>-->
+        <!--<tr class="table-dark">-->
+        <!--<th class="text-dark" scope="row">4</th>-->
+        <!--<td class="text-dark" id="line-through">去超市</td>-->
+        <!--<td class="text-secondary">不可编辑</td>-->
+        <!--<td><a class="text-info" href="#">撤销</a></td>-->
+        <!--<td><a class="text-danger" href="#">删除</a></td>-->
+        <!--</tr>-->
+        </tbody>
+    </table>
+    <!--{{ 用户POST的请求 }}-->
+    <!--{{ request_POST是什么 }}-->
+</div>
+{% endblock 主体 %}
