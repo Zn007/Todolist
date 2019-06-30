@@ -1,5 +1,4 @@
 # **待办清单网站**
-
 - Python Django Web开发搭建 
 - 根据[B站视频](https://www.bilibili.com/video/av24293644/?p=1)整理，简单易懂
 
@@ -340,5 +339,4 @@ a.delete()
     `Name：添加自定义的远端路径的名字`
 
     `PullUrl（与PushUrl默认是同一个）：添加想要提交到GitHub上对应项目的网址`
-    
 
